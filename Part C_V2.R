@@ -104,9 +104,9 @@ rm(Tardi.0_250, Tardi.1000_2100, Tardi.250_1000)
 #To see a comparison of histograms generated above based on the elevation groups determined, we can use par() to stack them together. This allows for an easier visualization of the frequency of AT proportions based on the subsetted elevations. You can generate each histogram separately or you can also highlight the entire portion of code below to stack all 3 histograms vertically to compare. 
 
 par(mfrow=c(3,1))
-hist(Tardi.0_250.Freq$ATproportion, col = 3, main = "AT Proportion for group Tardi.0_250",xlab = "AT Proportion", ylab = "Frequency")
-hist(Tardi.250_1000.Freq$ATproportion, col = 4, main = "AT Proportion for group Tardi.250_1000",xlab = "AT Proportion", ylab = "Frequency")
-hist(Tardi.1000_2100.Freq$ATproportion, col = 5, main = "AT Proportion for group Tardi.1000_2100",xlab = "AT Proportion", ylab = "Frequency")
+hist(Tardi.0_250.Freq$ATproportion, col = 3, main = "AT Proportion for group Tardi.0_250",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
+hist(Tardi.250_1000.Freq$ATproportion, col = 4, main = "AT Proportion for group Tardi.250_1000",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
+hist(Tardi.1000_2100.Freq$ATproportion, col = 5, main = "AT Proportion for group Tardi.1000_2100",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
 
 #Now that the AT proportion has been calculated for each group, I want to compare each group to one another to see if there is a staistical significant difference between the groups. This will be done by running a t-test comparing each group.
 
