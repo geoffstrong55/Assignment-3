@@ -2,7 +2,7 @@
 
 #Tardigrada are water-dwelling micro-animals that live in a variety of different environments. Tardigrades have been found in areas such as mountain tops, volcanoes, the deep sea, tropical rainforests, and even the Antarctic. 
 
-#Since these species live in a variety of different environments, I am interested in seeing if there are any differences in the samples DNA structure from different environments. The first analysis I want to perform is to calculate AT proportion in species from different elevations to see if there is a significant structure in the DNA of the different samples. 
+#Since these species live in a variety of different environments, I am interested in seeing if there are any differences in the samples' DNA structure from different environments. The first analysis I want to perform is to calculate AT proportion in species from different elevations to see if there is a significant structure in the DNA of the different samples. 
 
 #Once I have completed that analysis, I want to compare the species richness between different geographical areas.
 
@@ -54,7 +54,7 @@ Tardigrada2 <- Tardigrada %>%
 
 hist(Tardigrada2$elev, col = 2, main = "Frequency of Species by Elevation",xlab = "Elevation", ylab = "Frequency")
 
-#Based on the histogram, there are large proportion of samples that are close to sea level. When looking at Tardigrada2, I have noticed many samples are in elevations under 250. I want to know the exact number of species at different elevations. I will separate elevation values into three different groups. The three groups will be 0-250, 250-1000, and 1000-2100. Next, I will filter Tardigrada2 into 3 new tibbles named Tardi.0_250, Tardi.250_1000, and Tardi.1000_2100, respectively. I will use nrow to calculate the number of samples in each group.
+#Based on the histogram, there is a large proportion of samples that are close to sea level. When looking at Tardigrada2, I noticed many samples are in elevations under 250. I want to know the exact number of species at different elevations. I will separate elevation values into three different groups. The three groups will be 0-250, 250-1000, and 1000-2100. Next, I will filter Tardigrada2 into 3 new tibbles named Tardi.0_250, Tardi.250_1000, and Tardi.1000_2100, respectively. I will use nrow to calculate the number of samples in each group.
 
 Tardi.0_250 <- Tardigrada2 %>%
   filter(elev <= 250)
@@ -92,23 +92,21 @@ class(Tardi.1000_2100$nucleotides)
 Tardi.0_250.Freq <- as_tibble(letterFrequency(Tardi.0_250$nucleotides, letters = c("A", "C", "G", "T"))) %>%
   mutate(ATproportion = ((A + T) / (A + T + G + C))) 
 
-tardi.hist <- hist(Tardi.0_250.Freq$ATproportion, col = 3, main = "AT Proportion for group Tardi.0_250",xlab = "AT Proportion", ylab = "Frequency")
-
 Tardi.250_1000.Freq <- as_tibble(letterFrequency(Tardi.250_1000$nucleotides, letters = c("A", "C", "G", "T"))) %>%
   mutate(ATproportion = ((A + T) / (A + T + G + C)))
-
-tardi.hist2 <- hist(Tardi.250_1000.Freq$ATproportion, col = 4, main = "AT Proportion for group Tardi.250_1000",xlab = "AT Proportion", ylab = "Frequency")
 
 Tardi.1000_2100.Freq <- as.tibble(letterFrequency(Tardi.1000_2100$nucleotides, letters = c("A", "C", "G", "T"))) %>%
   mutate(ATproportion = ((A + T) / (A + T + G + C)))
 
-tardi.hist3 <- hist(Tardi.1000_2100.Freq$ATproportion, col = 5, main = "AT Proportion for group Tardi.1000_2100",xlab = "AT Proportion", ylab = "Frequency")
+#We can clean up the global environment by removing some objects that are no longer needed. 
+rm(Tardi.0_250, Tardi.1000_2100, Tardi.250_1000)
 
-#To see a comparison of all 3 histograms generated above based on the elevation groups determined, we can use par() to stack them together. This allows for an easier visualization of the frequency of AT proportions based on the subsetted elevations. 
+#To see a comparison of histograms generated above based on the elevation groups determined, we can use par() to stack them together. This allows for an easier visualization of the frequency of AT proportions based on the subsetted elevations. You can generate each histogram separately or you can also highlight the entire portion of code below to stack all 3 histograms vertically to compare. 
+
 par(mfrow=c(3,1))
-hist(Tardi.0_250.Freq$ATproportion, col = 3, main = "AT Proportion for group Tardi.0_250",xlab = "AT Proportion", ylab = "Frequency")
-hist(Tardi.250_1000.Freq$ATproportion, col = 4, main = "AT Proportion for group Tardi.250_1000",xlab = "AT Proportion", ylab = "Frequency")
-hist(Tardi.1000_2100.Freq$ATproportion, col = 5, main = "AT Proportion for group Tardi.1000_2100",xlab = "AT Proportion", ylab = "Frequency")
+hist(Tardi.0_250.Freq$ATproportion, col = 3, main = "AT Proportion for group Tardi.0_250",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
+hist(Tardi.250_1000.Freq$ATproportion, col = 4, main = "AT Proportion for group Tardi.250_1000",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
+hist(Tardi.1000_2100.Freq$ATproportion, col = 5, main = "AT Proportion for group Tardi.1000_2100",xlab = "AT Proportion", ylab = "Frequency", xlim = c(0.58, 0.72), ylim = c(0, 50))
 
 #Now that the AT proportion has been calculated for each group, I want to compare each group to one another to see if there is a staistical significant difference between the groups. This will be done by running a t-test comparing each group.
 
@@ -122,7 +120,7 @@ t.test(Tardi.250_1000.Freq$ATproportion, Tardi.1000_2100.Freq$ATproportion)
 
 #This was a very thorough analysis based on separated elevations. Instead of performing 3 different t-tests, perhaps we can look at using the ANOVA statistical test to analyze the variance between elevation and AT proportion. 
 
-#First, in order to analyze the AT proportions of the Tardigrada samples, we need to convert Tardigrada2 into a DNA stringset. 
+#First, to analyze the AT proportions of the Tardigrada samples, we need to convert Tardigrada2 into a DNA stringset. 
 Tardigrada2$nucleotides <- DNAStringSet(Tardigrada2$nucleotides)
 
 #Next, we can calculate the AT proportions of each sample and use the mutate function to add a column to the new data frame Tardigrada2.Freq. This data frame shows the frequency of each nucleotide plus the AT proportions for the samples. 
@@ -136,8 +134,11 @@ Tardigrada.elev <- cbind(Tardigrada2, Tardigrada2.Freq)
 Tardi_aov <- aov(Tardigrada.elev$elev~Tardigrada.elev$ATproportion)
 summary.aov(Tardi_aov)
 
+#For the next analysis, we won't be needing some of the objects in the global environment anymore. 
+rm(Tardi.0_250.Freq, Tardi.250_1000.Freq, Tardi.1000_2100.Freq, Tardi_aov, Tardigrada.elev, Tardigrada2.Freq)
+
 ###Analysis of Species Richness----
-#The next thing I want to analyze the species abundance of this data set. To do this I will create a new tibble that contains the country that each sample is taken from, the BIN, and the count of samples for each BIN, which will be represented by n. I also wanto know the country that has the largest number of samples. 
+#The next thing I want to analyze is the species abundance of this data set. To do this I will create a new tibble that contains the country that each sample is taken from, the BIN, and the count of samples for each BIN, which will be represented by n. I also wanto know the country that has the largest number of samples. 
 
 Tardigrada %>%
   group_by(country) %>%
@@ -148,20 +149,19 @@ Tardigrada %>%
 
 Tardigrada3 <- Tardigrada %>%
   group_by(country, bin_uri) %>%
-  count(bin_uri) %>%
-  spread(bin_uri, n)
+  count(bin_uri)
 
 #Now that I have the species counted by BIN, I need to put the data into a community object so it can be used for analysis to calculated the Fisher's Alpha. I will make a new tibble called Tardigrada4. I will make a community object using the function spread().
 
-#You can pipe the spread() into Tardigrada3 to clean up the code a little bit. Now Tardigrada3 is a community object already, there is no need for Tardigrada4. 
+Tardigrada4 <- spread(Tardigrada3, bin_uri, n)
 
 #To be able to run this new data frame in a function in vegan, I will have to replace the NAs in the data frame to a numeric value of 0. 
 
-Tardigrada3[is.na(Tardigrada3)] <- 0
+Tardigrada4[is.na(Tardigrada4)] <- 0
 
 #Next, I will create a new data set Tardigrada5, removing the row names, and switching the names of the columns to country. 
 
-Tardigrada5 <- Tardigrada3 %>%
+Tardigrada5 <- Tardigrada4 %>%
   remove_rownames %>%
   column_to_rownames(var="country")
 
@@ -204,7 +204,5 @@ m <- c(1, 5, 20, 50, 100, 200, 400)
 Tardi.Richness <- iNEXT(Tardigrada8, q = 0, "abundance", size = m)    
 
 ggiNEXT(Tardi.Richness, type=1)
-  
-#The plot created shows that Antarctica has the highest species richness and estimated species richness. Italy is second for both of those value. Chile, United Kingdom, and Spain have the lowest species richness values, respectively. This analysis shows that Antarctica has the highest number of sample species richenss and the highest diversity of the phylum Tardigrada.
-  
 
+#The plot created shows that Antarctica has the highest species richness and estimated species richness. Italy is second for both of those value. Chile, United Kingdom, and Spain have the lowest species richness values, respectively. This analysis shows that Antarctica has the highest number of sample species richenss and the highest diversity of the phylum Tardigrada.
